@@ -5,6 +5,13 @@ Double click AutoPictureGalleryMaker.jar to generate one within the "bucket" fol
 This was developed in VisualStudio Code so I strongly recommend following this tutorial to get set up if you want to play around with my code:
 https://www.youtube.com/watch?v=zyyDcfQYwIw
 
+# Parameters Meaning (within parameters.txt)
+Page Size = How many images per web page.
+Navigation Bar Size = Maximum number of links allowed on the navigation bars.
+Work in Folder = The folder that contains the image folders and where the gallery files will be output.
+Separate Gallery for Each Folder = If false (default), it will create 1 gallery for every folder within the work in folder. If true it will create a separate gallery for every folder in the root directory.
+Default Gallery Name: The name of the gallery files if Separate Gallery for Each Folder is set to false.
+
 # How To Use
 1. Place the outside the folder where you want to generate the gallery.
 - AutoPictureGalleryMaker.jar
@@ -13,9 +20,7 @@ https://www.youtube.com/watch?v=zyyDcfQYwIw
 
 2. In parameters.txt replace on the line that starts with "Work in Folder" after the colon: put the exact name of the folder containing your image folders. There should not be a space between the colon and the folder name. Remember to save. 
 
-Bear in mind that the program will generate a separate gallery for every folder within the root folder it finds. For example, if the folder you indicated contains folders called "vacation","dogs","food" it will generate 3 galleries - one for each folder.
-
-You may also change the page size if you like. This changes the number of images per page.
+You may edit the other parameters to your liking using the Parameters Meaning (within parameters.txt) section.
 
 3. Double click AutoPictureGalleryMaker.jar to generate the gallery.
 
