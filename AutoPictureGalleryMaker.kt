@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 
 
 
+
 //Resources
 //https://www.youtube.com/watch?v=zyyDcfQYwIw <-- This is a must if you don't want to use IntelliJ.
 //https://kotlinandroid.org/kotlin/kotlin-check-if-file-exists/
@@ -18,6 +19,7 @@ import java.nio.file.Paths;
 
 
 var pageSize: Int = 20;
+var navBarSize:Int = 10;
 
 val paramPath = "./parameters.txt"; //Location of the parameters
 
@@ -29,9 +31,10 @@ val spantemplatePath = "./templates/htmltemplatespan.html";
 
 //String patterns within the templates that the system replaces
 var htmltemplateKey = "[IMGSGOHERE]";
-var htmltemplatenavKey = "[NAVGOESHERE]"
-var imgtemplateKey = "[PATHHERE]"
-var numKey = "[NUMHERE]"
+var htmltemplatenavKey = "[NAVGOESHERE]";
+var imgtemplateKey = "[PATHHERE]";
+var numKey = "[NUMHERE]";
+var capKey = "[CAPHERE]";
 
 //There the code stores the html templates
 var htmlString = "";
@@ -42,12 +45,21 @@ var ancString = "";
 var bucketPath = "./bucket";
 val acceptableExtensions = arrayOf("png","jpg","jpeg","gif","bmp","webp","tif","svg");
 
+//Option to lump every folder together
+var AllOneGallery = true; //If this is set to true this will make one main gallery instead of a separate one for every folder. 
+var DefaultGalleryName = "MyGallery"
+
 //Parameter names and defaults
 val paramStrPageSize = "Page Size";
-var paramStrBucketFolder = "Work in Folder"
-val paramDefault = paramStrPageSize + " :" + pageSize.toString() + "\n" + paramStrBucketFolder + " :" + bucketPath.replace("./","");
+var paramStrBucketFolder = "Work in Folder";
+var paramStrSeparateGalleryForeEach = "Separate Gallery for Each Folder"
+var paramStrDefaultGalleryName= "Default Gallery Name"
+var paramNavSize="Navigation Bar Size";
+val paramDefault = paramStrPageSize + " :" + pageSize.toString() + "\n" + paramNavSize + " :" + navBarSize.toString() + "\n" + paramStrBucketFolder + " :" + bucketPath.replace("./","") + "\n" + paramStrSeparateGalleryForeEach + " :false\n" + paramStrDefaultGalleryName + " :" + DefaultGalleryName ;
 
 var logOutput = "";
+
+
 
 //Gets the contents of a file as a string.
 fun GetFileAsString (path:String):String
@@ -57,7 +69,7 @@ fun GetFileAsString (path:String):String
 
     if (theFile.exists() == false)
     {
-        AddToLog("GetFileAsString says : \"" + path + " does not exist, fartknocker!.\"");
+        AddToLog("GetFileAsString says : \"" + path + " does not exist.\"");
         return toSend;
     }
 
@@ -109,8 +121,81 @@ fun TrimPath(totrim:String, levels:Int = 1):String
 
 }
 
+//Creates the navigation links.
+/*
+totalPages = the number of pages there are.
+currentPage = the link that gets turned back into a span.
+baseFileName = path common to all pages.
+navSize = the max number of links in the nav bar.
+*/
+fun makeNav (totalPages:Int,currentPage:Int, baseFileName:String ,navSize:Int ,anchorTemplate:String = ancString, spanTemplate:String = spanString):String
+{
+
+   
+    var toSend = "";
+
+    //Add first link and prev page link.
+
+    if (currentPage > 1 )
+    {
+        //First page and previous page 
+        toSend = anchorTemplate.replace(imgtemplateKey,baseFileName + "1.html").replace(numKey,"<<");
+        toSend = toSend + anchorTemplate.replace(imgtemplateKey,baseFileName + (currentPage - 1).toString() + ".html").replace(numKey,"&nbsp;<&nbsp;");
+
+        
+    }
+
+    var counter:Int = 1;
+    var offset =  currentPage - navSize/2;
+    
+
+
+    //Correcting for when it reaches the end.
+    if ((currentPage + navSize/2 > totalPages))
+    {
+        offset -= ((currentPage + navSize/2) - totalPages -1)
+    }
+
+    //When the total pages are few enough to fit on one page || too close to the beginning || too close to teh end 
+    if (offset < 1)
+    {
+        offset = 1;
+    }
+
+    
+
+        while (counter <= navSize)
+        {
+            var templateToUse:String = if (offset != currentPage) anchorTemplate else spanTemplate;
+
+            toSend = toSend + templateToUse.replace(imgtemplateKey,baseFileName + offset.toString() + ".html").replace(numKey,offset.toString());
+
+            //If the gallery is smaller than the navSize.
+            if (offset == totalPages){counter = 9001;}
+
+            offset++;
+            counter++;
+        }
+    
+
+
+    if (currentPage != totalPages )
+    {
+        //Next Page and last page 
+        
+        toSend = toSend + anchorTemplate.replace(imgtemplateKey,baseFileName + (currentPage + 1).toString() + ".html").replace(numKey,"&nbsp;>&nbsp;");
+        toSend = toSend + anchorTemplate.replace(imgtemplateKey,baseFileName + totalPages.toString() + ".html").replace(numKey,">>");
+
+        
+    }
+
+
+    return toSend;
+}
+
 fun main (args:Array<String>)
 {
+
 
 
 //Look for and load the variables from the parameter file. Includes: Page size. If it doesn't exist, make it.
@@ -142,6 +227,37 @@ else
             bucketPath = "./" + ln.split(":")[1];
             AddToLog("Working Path Set to $bucketPath");
             
+        }
+        if (ln.indexOf(paramStrSeparateGalleryForeEach) == 0)
+        {
+            AddToLog("Gallery Handling Found!");
+           
+            if (ln.split(":")[1].replace(" ","") == "true")
+            {
+                AllOneGallery = false;
+                AddToLog ("Every folder will get it's own gallery.");
+            }
+            else
+            {
+                AddToLog("There will be one gallery for every folder.");
+            }
+            
+            
+        }
+
+        if (ln.indexOf(paramStrDefaultGalleryName) == 0)
+        {
+            AddToLog("Default Gallery Name Found!");
+            DefaultGalleryName = "./" + ln.split(":")[1];
+            AddToLog("Default Gallery Name Set to $DefaultGalleryName");
+            
+        }
+
+        if (ln.indexOf(paramNavSize) == 0)
+        {
+            AddToLog("Nav Bar Size found");
+            navBarSize = ln.split(":")[1].replace(" ","").toInt();
+            AddToLog("Nav Bar Size set to $navBarSize");
         }
     }
 
@@ -206,6 +322,11 @@ if (lePathString.length - lePathString.replace("\\","").length == 2 && lePath.is
 
 }
 
+if (AllOneGallery)
+{
+    bucketFolders = arrayOf(bucketPath);
+}
+
 //FOR EACH sub-folder
 for (lePath in bucketFolders)
 {
@@ -233,15 +354,38 @@ for (lePath in bucketFolders)
             var justBucketFolderName = bucketPath.replace("./","");//Flipping slashes...
             
             var snippedPath = lePath.toString().replace(".\\$justBucketFolderName\\","");//Clear away the "bucket" path.
+            var txtPath = lePath.toString();//Location of where the text file should be.
+            var caption = "";
+
+            //Replace any extension with ".txt"
+            for (ext in acceptableExtensions)
+            {
+                txtPath = txtPath.replace("." + ext,".txt");
+            }
+
+            //Adding caption if it exists.
+            if (File(txtPath).exists() == true)
+            {
+                caption = GetFileAsString(txtPath).replace("\n","</br>").replace("\"","&quot;").replace("'","&apos;");
+                
+            }
+
+          
+            
 
             AddToLog ( "Processing: $snippedPath" );
 
 
-            imgList[imgList.size - 1] = imgList[imgList.size - 1] + (imgString.replace(imgtemplateKey,snippedPath));
+
+            imgList[imgList.size - 1] = imgList[imgList.size - 1] + (imgString.replace(imgtemplateKey,snippedPath).replace(capKey,caption));
+
+  
 
             hadFiles = true;
             imgCount++;
         }
+
+
 
         
 
@@ -273,15 +417,40 @@ for (lePath in bucketFolders)
 
             var endFileName = lePath.split("\\")[lePath.split("\\").size-1];
 
+            if (AllOneGallery == true)
+            {
+                endFileName = DefaultGalleryName;
+            }
+
             navComponent = templateToUse.replace(numKey,navCountDown.toString()).replace(imgtemplateKey,(endFileName + navCountDown.toString() + ".html")) + navComponent;
+            
 
             navCountDown--;
         }
 
+        var outPath = lePath + imgCount.toString() + ".html";//Folder output
+        var navBase = lePath.split("\\")[lePath.split("\\").size-1];//For the nav bar.
+
+        if (AllOneGallery == true)
+        {
+          
+            outPath = bucketPath + "/" + DefaultGalleryName + imgCount.toString() + ".html";
+            navBase = DefaultGalleryName;
+        }
+        
+       
+
+        navComponent = makeNav(imgList.size,imgCount,navBase,navBarSize,ancString,spanString);
+
+        //If it's just one page take out the nav par entirely.
+        if (imgList.size == 1){navComponent = "";}
+
         //Assembling the page
         var toSend = htmlString.replace(htmltemplateKey,page).replace(htmltemplatenavKey,navComponent);
-        var outPath = lePath + imgCount.toString() + ".html";
+        
 
+        //If they want it all in one, adjust the path.
+        
         AddToLog("Writing " + outPath);
 
         //And shipping it out.

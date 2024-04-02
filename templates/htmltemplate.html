@@ -5,9 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Gallery</title>
     <link rel="stylesheet" href = "css/ImgGalleryCss.css">
+    
 </head>
+<h1 id = "ShowBoxExit">X</h1>
+<div id = "ShowBox">
+        
+</div>
+
+
 <body>
+    
     <h1 class = "TitleBar">My Image Gallery</h1>
+    
+   
+    
     <div class = "NavBar">
         
     [NAVGOESHERE]
@@ -20,4 +31,32 @@
     [NAVGOESHERE]
     </div>
 </body>
+<script>
+    var ShowBox;
+    var ShowBoxExit;
+
+    window.onload = function (){
+     
+        ShowBox = document.getElementById("ShowBox");
+        ShowBoxExit = document.getElementById("ShowBoxExit");
+
+        ShowBoxExit.onclick = function()
+        {
+            ShowBoxExit.style.display = ShowBox.style.display = "none"; 
+        }
+
+        var imgs = document.getElementsByTagName("img");
+        for (var a = 0; a < imgs.length; a++)
+        {
+            imgs[a].onclick = function (){
+
+                var caption = this.getAttribute("cap");
+                var source = this.src;
+                ShowBox.innerHTML = "<div><a href = '[SOURCEHERE]' target = '_blank'><img src = '[SOURCEHERE]'></a><p>[CAPPPY]</p></div>".replaceAll("[SOURCEHERE]",source).replaceAll("[CAPPPY]",caption);
+                ShowBoxExit.style.display = ShowBox.style.display = "flex"; 
+            }
+        }
+    }
+
+</script>
 </html>
