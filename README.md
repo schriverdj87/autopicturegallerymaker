@@ -2,6 +2,8 @@
 Automatically scans a directory for images and creates a picture gallery of HTML web pages within.
 Double click AutoPictureGalleryMaker.jar to generate one within the "bucket" folder.
 
+YouTube Demo: https://www.youtube.com/watch?v=VyXjz1QjIkk
+
 This was developed in VisualStudio Code so I strongly recommend following this tutorial to get set up if you want to play around with my code:
 https://www.youtube.com/watch?v=zyyDcfQYwIw
 
