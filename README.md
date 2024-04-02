@@ -7,9 +7,13 @@ https://www.youtube.com/watch?v=zyyDcfQYwIw
 
 # Parameters Meaning (within parameters.txt)
 Page Size = How many images per web page.
+
 Navigation Bar Size = Maximum number of links allowed on the navigation bars.
+
 Work in Folder = The folder that contains the image folders and where the gallery files will be output.
+
 Separate Gallery for Each Folder = If false (default), it will create 1 gallery for every folder within the work in folder. If true it will create a separate gallery for every folder in the root directory.
+
 Default Gallery Name: The name of the gallery files if Separate Gallery for Each Folder is set to false.
 
 # How To Use
