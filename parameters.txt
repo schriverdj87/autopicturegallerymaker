@@ -1,0 +1,5 @@
+Page Size :20
+Navigation Bar Size :10
+Work in Folder :bucket
+Separate Gallery for Each Folder :false
+Default Gallery Name :MyGallery
