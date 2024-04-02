@@ -1,2 +1,0 @@
-Page Size :20
-Work in Folder :bucket
